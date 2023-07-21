@@ -5,10 +5,12 @@ import {
   createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
 //Styles
-import "./signUpForm.styles.scss";
+import { SignUpContainer, SignUpTitle } from "./signUpForm.styles.js";
 //Components
 import Button from "../buttons/Button.component";
 import FormInput from "../formInput/FormInput.component";
+//routes
+import { useNavigate } from "react-router-dom";
 
 const defaultFormFields = {
   displayName: "",
@@ -20,6 +22,8 @@ const defaultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
+
+  const navigate = useNavigate();
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -44,6 +48,7 @@ const SignUpForm = () => {
       );
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
+      navigate("/");
     } catch (err) {
       if (err.code === "auth/email-already-in-use") {
         alert("This email is already in use");
@@ -54,8 +59,8 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="sign-up-container">
-      <h2>Don't have an account?</h2>
+    <SignUpContainer>
+      <SignUpTitle>Don't have an account?</SignUpTitle>
       <span> Sign up with your email and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
@@ -94,11 +99,9 @@ const SignUpForm = () => {
           onChange={handleChange}
         />
 
-        <Button type="submit" buttonType={"default"}>
-          Sign Up
-        </Button>
+        <Button type="submit">Sign Up</Button>
       </form>
-    </div>
+    </SignUpContainer>
   );
 };
 

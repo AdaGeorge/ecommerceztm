@@ -1,10 +1,13 @@
-import { Fragment, useContext } from "react";
-import { CategoriesContext } from "../../context/Categories.context";
+import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import CategoryPreview from "../../components/categoryPreview/CategoryPreview.component";
+//get categories from redux
+import { useSelector } from "react-redux";
+import { selectCurrentCategories } from "../../store/categories/category.selectors";
 
 const CategoriesPreview = () => {
-  const { categories } = useContext(CategoriesContext);
+  const categories = useSelector(selectCurrentCategories);
+  console.log(categories);
   const navigate = useNavigate();
 
   return (

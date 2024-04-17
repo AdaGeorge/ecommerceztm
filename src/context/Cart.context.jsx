@@ -1,4 +1,7 @@
 import { createContext, useReducer } from "react";
+import { createAction } from "../utils/reducer/reducer.utils";
+
+//functions to change data
 
 const addCartItem = (cartItems, productToAdd) => {
   let existingCartItem = cartItems.find(
@@ -32,7 +35,7 @@ const deleteProduct = (cartItems, productToErase) => {
   return cartItems.filter((cartItem) => cartItem.id !== productToErase.id);
 };
 
-//the actual value you want to access
+//the actual value
 export const CartContext = createContext({
   isCartOpen: false,
   setIsCartOpen: () => {},
@@ -43,6 +46,8 @@ export const CartContext = createContext({
   cartCount: 0,
   cartTotal: 0,
 });
+
+//Initial state
 
 const INITIAL_STATE = {
   isCartOpen: false,
@@ -56,6 +61,7 @@ export const CART_ACTION_TYPES = {
   TOGGLE_CART_OPEN: "TOGGLE_CART_OPEN",
 };
 
+//reducer
 const cartReducer = (state, action) => {
   const { type, payload } = action;
 
@@ -80,11 +86,12 @@ export const CartProvider = ({ children }) => {
     useReducer(cartReducer, INITIAL_STATE);
 
   const setIsCartOpen = (bool) => {
-    dispatch({
-      type: CART_ACTION_TYPES.TOGGLE_CART_OPEN,
-      payload: { isCartOpen: bool },
-    });
+    dispatch(
+      createAction(CART_ACTION_TYPES.TOGGLE_CART_OPEN, { isCartOpen: bool })
+    );
   };
+
+  //handler of reducer
   const updateCartItemsReducer = (newCartItems) => {
     const newCartCount = newCartItems.reduce((acc, el) => {
       return acc + el.quantity;
@@ -92,16 +99,16 @@ export const CartProvider = ({ children }) => {
     let newCartTotal = 0;
     newCartItems.map((el) => (newCartTotal += el.price * el.quantity));
 
-    dispatch({
-      type: CART_ACTION_TYPES.CART_ITEMS,
-      payload: {
+    dispatch(
+      createAction(CART_ACTION_TYPES.CART_ITEMS, {
         cartItems: newCartItems,
         cartTotal: newCartTotal,
         cartCount: newCartCount,
-      },
-    });
+      })
+    );
   };
 
+  //helper functions
   const addItemToCart = (productToAdd) => {
     const newCartItems = addCartItem(cartItems, productToAdd);
     updateCartItemsReducer(newCartItems);
